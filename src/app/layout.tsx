@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import {Toaster} from '@/components/ui/sonner'
 import { ThemeProvider } from "@/components/theme-provider";
+import Link from "next/link";
+import { ModeToggle } from "@/components/ModeToggle";
+// import { moduleName } from "@/lib/constante";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -24,6 +28,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // const generateDate = new Date().toISOString()
   return (
     <html lang="en" suppressHydrationWarning>
     <head />
@@ -34,7 +39,32 @@ export default function RootLayout({
         enableSystem
         disableTransitionOnChange
       >
+        <nav className="my-2">
+        <div className="flex justify-center items-center gap-6">
+          <Link href='/banq'>
+         Bank 
+        </Link>
+        <Link href='/posts'>
+        Articles
+        </Link>
+        <Link href='/tasks'>
+         Tasks
+        </Link>
+        <ModeToggle />
+        </div>
+        </nav>
         {children}
+        <Toaster />
+        {/* <footer className="border-t">
+        <div className="container flex h-14 items-center justify-center px-4 text-center sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl">
+            © {new Date().getFullYear()} {moduleName} . All rights reserved.{' '}
+            <p className="animate-color-cycle text-sm">
+              Rendu le {generateDate}
+            </p>
+          </div>
+        </div>
+      </footer> */}
       </ThemeProvider>
     </body>
   </html>
