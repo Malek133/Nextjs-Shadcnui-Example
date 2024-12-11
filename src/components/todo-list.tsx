@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState,useOptimistic,startTransition } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {addTodo as AddTodoAction} from '../app/actions'
@@ -15,26 +15,36 @@ interface TodosProps {
 export default function TodoList({ todos}: TodosProps) {
 
    const [newTodo, setNewTodo] = useState("");
+   const [OptimisicTodo,AdduseOptimisicTodo]=useOptimistic(todos,
+    (state,newTodos:Todo) =>[...state,newTodos])
 
   const handleClick = async () => {
     if(newTodo ===''){
         toast.error('we do not have todo .')
         return
     }
-    try {
-
-        await AddTodoAction({
-      title:newTodo,
+    const newTodos = {
+        id:OptimisicTodo.length +1,
+        title:newTodo,
       isCompleted: false,
       updadtedAt: new Date().toISOString(),
-    })
+    }
+    
+    startTransition(async () =>{
+        AdduseOptimisicTodo(newTodos)
+        try {
+
+        await AddTodoAction(newTodos)
      toast('Todo has been created.')
 
    
 
     } catch (error) {
+        console.error('this is error',error)
         toast.error('failed to create todo .')
-    }
+    } 
+    })
+   
     
   }
 
@@ -54,7 +64,7 @@ export default function TodoList({ todos}: TodosProps) {
         <Button onClick={handleClick}>Submit</Button>
       </div>
       <ul className="space-y-2">
-        {todos && todos.map((todo) => (
+        {OptimisicTodo && OptimisicTodo.map((todo) => (
         <TodoItem key={todo.id} todo={todo} />
         ))}
       </ul>
